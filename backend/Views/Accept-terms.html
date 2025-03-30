@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Page</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: 'Montserrat', sans-serif;
+            background-color: #f0f0f0;
+        }
+        .login-container {
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 90%;
+            max-width: 700px;
+        }
+        .login-container img {
+            width: 50px;
+            margin: 0 10px 20px 0px;
+        }
+        .login-container h2 {
+            margin-bottom: 20px;
+            color: #4CAF50;
+        }
+        .checkbox-container {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        
+        .login-container a {
+            color: #007bff;
+            text-decoration: none;
+        }
+        .login-container a:hover {
+            text-decoration: underline;
+        }
+        .login-container .button-container {
+            display: flex;
+            justify-content: center;
+        }
+        .login-container .button-container a {
+            background-color: #28a745;
+            color: #ffffff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            text-decoration: none;
+        }
+        .login-container .button-container a:hover {
+            background-color: #218838;
+        }
+    </style>
+
+
+
+</head>
+<body>
+    <div class="login-container">
+        <h2>Please agree with the terms</h2>
+            <div class="checkbox-container">   
+                <p>By clicking continue you agree to the <a href="/api/terms-and-conditions">Terms and Conditions</a> for A2SV-Agrisistance and you understand that your data will be shared with A2SV-Agrisistance.</p>
+            </div>
+            <div class="button-container">
+                <a href="/api/auth/google/success-auth">Continue</a>
+            </div>
+        </form>
+        <p><a href="/api/auth/login">Choose other way to login</a></p>
+    </div>
+</body>
+</html>

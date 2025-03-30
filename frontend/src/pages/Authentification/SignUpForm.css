@@ -1,0 +1,107 @@
+.signup-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  background-color: #ffffff;
+}
+
+.signup-form {
+  width: 100%;
+  max-width: 28rem;
+}
+
+.form-title {
+  color: #2D1949;
+  font-size: 1.5rem;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 2rem;
+  font-family: 'poppins';
+}
+
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+.form-label {
+  display: block;
+  font-size: 0.875rem;
+  color: #4B5563;
+  margin-bottom: 0.5rem;
+}
+
+.form-input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 1px solid #30c1d6;
+  border-radius: 0.375rem;
+  outline: none;
+  transition: all 0.3s ease;
+}
+
+.form-input:focus {
+  box-shadow: 0 0 0 2px rgba(66, 199, 219, 0.2);
+}
+
+.submit-button {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  background-color: #42C7DB;
+  color: white;
+  font-weight: 500;
+  border: none;
+  border-radius: 0.375rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.submit-button:hover {
+  background-color: #3bb4c7;
+}
+
+.submit-button:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(66, 199, 219, 0.4);
+}
+
+.login-link {
+  text-align: center;
+  font-size: 0.875rem;
+  color: #4B5563;
+  margin-top: 1rem;
+}
+
+.login-link a {
+  color: #42C7DB;
+  text-decoration: none;
+}
+
+.login-link a:hover {
+  text-decoration: underline;
+}
+
+/* Error states */
+.form-input.error {
+  border-color: #EF4444;
+}
+
+.error-message {
+  color: #EF4444;
+  font-size: 0.75rem;
+  margin-top: 0.25rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 640px) {
+  .signup-form {
+    padding: 0 1rem;
+  }
+  
+  .form-title {
+    font-size: 1.25rem;
+  }
+}
+
+

@@ -1,0 +1,58 @@
+.partners-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  
+  .partners-title {
+    color: #372469; /* Purple color matching your design */
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 2rem;
+    font-size: 48;
+  }
+  
+  .partners-scroll-container {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE and Edge */
+  }
+  
+  /* Hide scrollbar for Chrome, Safari and Opera */
+  .partners-scroll-container::-webkit-scrollbar {
+    display: none;
+  }
+  
+  .partners-logo-container {
+    display: flex;
+    gap: 2rem;
+    padding: 1rem 0;
+    min-width: min-content; /* Ensures logos don't shrink */
+  }
+  
+  .partner-logo {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    background: white;
+    border-radius: 8px;
+    transition: transform 0.2s ease;
+  }
+  
+  .partner-logo:hover {
+    transform: scale(1.05);
+  }
+  
+  .logo-image {
+    max-width: 120px;
+    height: auto;
+    object-fit: contain;
+  }

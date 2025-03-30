@@ -1,0 +1,2055 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Tomorrow.io API",
+    "version": "unknown"
+  },
+  "servers": [
+    {
+      "url": "https://api.tomorrow.io/v4"
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "sec0": {
+        "type": "apiKey",
+        "in": "query",
+        "name": "apikey"
+      }
+    }
+  },
+  "security": [
+    {
+      "sec0": []
+    }
+  ],
+  "paths": {
+    "/alerts": {
+      "get": {
+        "summary": "List Alerts",
+        "description": "",
+        "operationId": "get-alerts",
+        "parameters": [
+          {
+            "name": "Accept-Encoding",
+            "in": "header",
+            "schema": {
+              "type": "string",
+              "default": "gzip"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "200",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Result": {
+                    "value": "{\n    \"data\": {\n        \"alerts\": [{\n            \"id\": \"38f689d83c264eb0b084ba095f2ea743\",\n            \"insight\": \"38f689d83c264eb0b084ba095f2ea332\",\n            \"name\": \"De-icing Conditions Alert\",\n            \"isActive\": true,\n            \"notifications\": [\"...notifications\"],\n            \"createdAt\": \"2020-05-10T06:49:34+0000\",\n            \"updatedAt\": \"2020-05-11T08:22:34+0000\"\n        }]\n    },\n    \"links\": {}\n}"
+                  }
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "alerts": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "string",
+                                "example": "38f689d83c264eb0b084ba095f2ea743"
+                              },
+                              "insight": {
+                                "type": "string",
+                                "example": "38f689d83c264eb0b084ba095f2ea332"
+                              },
+                              "name": {
+                                "type": "string",
+                                "example": "De-icing Conditions Alert"
+                              },
+                              "isActive": {
+                                "type": "boolean",
+                                "example": true,
+                                "default": true
+                              },
+                              "notifications": {
+                                "type": "array",
+                                "items": {
+                                  "type": "string",
+                                  "example": "...notifications"
+                                }
+                              },
+                              "createdAt": {
+                                "type": "string",
+                                "example": "2020-05-10T06:49:34+0000"
+                              },
+                              "updatedAt": {
+                                "type": "string",
+                                "example": "2020-05-11T08:22:34+0000"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "links": {
+                      "type": "object",
+                      "properties": {}
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false
+      },
+      "post": {
+        "summary": "Create an Alert",
+        "description": "",
+        "operationId": "post-alerts",
+        "parameters": [
+          {
+            "name": "Accept-Encoding",
+            "in": "header",
+            "schema": {
+              "type": "string",
+              "default": "gzip"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "name",
+                  "insight"
+                ],
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "The name of the alert used by triggered alerts"
+                  },
+                  "insight": {
+                    "type": "string",
+                    "description": "ID of a custom insight or pre-defined Severe Weather Event category - e.g. \"floods\" or ”lightning” for lightning alerts"
+                  },
+                  "isActive": {
+                    "type": "boolean",
+                    "description": "Defines whether the alert triggers notifications to the webhook",
+                    "default": true
+                  },
+                  "notifications": {
+                    "type": "string",
+                    "description": "The configuration of the notifications sent to the webhook (`PRIOR`, `START`, and `END` are available for Insight Alerts and `PUBLISH` is available for Severe Weather Event Alerts only).",
+                    "format": "json"
+                  },
+                  "lightningConfig": {
+                    "type": "string",
+                    "description": "configuration of lightning alert with following properties:  `lightningTypes` - an array of possible lightning types based on which alert detection happens. Allowed values: `C2C` (cloud to cloud) and `C2G` (cloud to ground). `buffers` - an array of radiuses based on which the alert detection happens (as soon as lightning strike occurs in one of the buffer, the alert notification is triggered). Minimum buffer value 0.6 and maximum value 48. Note that only first strike within the buffer triggers the alert notification.  `ttl` - duration of all-clear notification since the last strike happen within the buffer `distanceUnit` - the unit of buffer distance, allowed values `km` (kilometers) or `mi` (miles)",
+                    "format": "json"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "200",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Result": {
+                    "value": "{\n    \"data\": {\n        \"alert\": {\n            \"id\": \"38f689d83c264eb0b084ba095f2ea743\",\n            \"insight\": \"38f689d83c264eb0b084ba095f2ea332\",\n            \"name\": \"De-icing Conditions Alert\",\n            \"isActive\": true,\n            \"notifications\": [\"...notifications\"],\n            \"createdAt\": \"2020-05-10T06:49:34+0000\"\n        },\n    }\n}"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false
+      }
+    },
+    "/alerts/{alertId}": {
+      "get": {
+        "summary": "Retrieve an Alert",
+        "description": "",
+        "operationId": "get-alerts-id",
+        "parameters": [
+          {
+            "name": "alertId",
+            "in": "path",
+            "description": "ID of a pre-defined alert",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          },
+          {
+            "name": "Accept-Encoding",
+            "in": "header",
+            "schema": {
+              "type": "string",
+              "default": "gzip"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "200",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Result": {
+                    "value": "{\n    \"data\": {\n        \"alert\": {\n            \"id\": \"38f689d83c264eb0b084ba095f2ea743\",\n            \"insight\": \"38f689d83c264eb0b084ba095f2ea332\",\n            \"name\": \"De-icing Conditions Alert\",\n            \"isActive\": true,\n            \"notifications\": [\"...notifications\"],\n            \"createdAt\": \"2020-05-10T06:49:34+0000\",\n            \"updatedAt\": \"2020-05-11T08:22:34+0000\"\n        }\n    }\n}"
+                  }
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "alert": {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "string",
+                              "example": "38f689d83c264eb0b084ba095f2ea743"
+                            },
+                            "insight": {
+                              "type": "string",
+                              "example": "38f689d83c264eb0b084ba095f2ea332"
+                            },
+                            "name": {
+                              "type": "string",
+                              "example": "De-icing Conditions Alert"
+                            },
+                            "isActive": {
+                              "type": "boolean",
+                              "example": true,
+                              "default": true
+                            },
+                            "notifications": {
+                              "type": "array",
+                              "items": {
+                                "type": "string",
+                                "example": "...notifications"
+                              }
+                            },
+                            "createdAt": {
+                              "type": "string",
+                              "example": "2020-05-10T06:49:34+0000"
+                            },
+                            "updatedAt": {
+                              "type": "string",
+                              "example": "2020-05-11T08:22:34+0000"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false
+      },
+      "put": {
+        "summary": "Update an Alert",
+        "description": "",
+        "operationId": "put-alerts-id",
+        "parameters": [
+          {
+            "name": "alertId",
+            "in": "path",
+            "description": "ID of a pre-defined alert",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          },
+          {
+            "name": "Accept-Encoding",
+            "in": "header",
+            "schema": {
+              "type": "string",
+              "default": "gzip"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "The name of the alert used by triggered alerts"
+                  },
+                  "notifications": {
+                    "type": "string",
+                    "description": "The configuration of the notifications sent to the webhook (`PRIOR`, `START`, and `END` are available for Insight Alerts and `PUBLISH` is available for Severe Weather Event Alerts only).",
+                    "format": "json"
+                  },
+                  "lightningConfig": {
+                    "type": "string",
+                    "description": "configuration of lightning alert with following properties:  `lightningTypes` - an array of possible lightning types based on which alert detection happens. Allowed values: `C2C` (cloud to cloud) and `C2G` (cloud to ground). `buffers` - an array of radiuses based on which the alert detection happens (as soon as lightning strike occurs in one of the buffer, the alert notification is triggered). Minimum buffer value 0.6 and maximum value 48. Note that only first strike within the buffer triggers the alert notification.  `ttl` - duration of all-clear notification since the last strike happen within the buffer `distanceUnit` - the unit of buffer distance, allowed values `km` (kilometers) or `mi` (miles)",
+                    "format": "json"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "200",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Result": {
+                    "value": "{\n    \"data\": {\n        \"alert\": {\n            \"id\": \"38f689d83c264eb0b084ba095f2ea743\",\n            \"insight\": \"38f689d83c264eb0b084ba095f2ea332\",\n            \"name\": \"De-icing Conditions Alert\",\n            \"isActive\": true,\n            \"notifications\": [\"...notifications\"],\n            \"createdAt\": \"2020-05-10T06:49:34+0000\",\n            \"updatedAt\": \"2020-05-11T08:22:34+0000\"\n        }\n    }\n}"
+                  }
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "alert": {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "string",
+                              "example": "38f689d83c264eb0b084ba095f2ea743"
+                            },
+                            "insight": {
+                              "type": "string",
+                              "example": "38f689d83c264eb0b084ba095f2ea332"
+                            },
+                            "name": {
+                              "type": "string",
+                              "example": "De-icing Conditions Alert"
+                            },
+                            "isActive": {
+                              "type": "boolean",
+                              "example": true,
+                              "default": true
+                            },
+                            "notifications": {
+                              "type": "array",
+                              "items": {
+                                "type": "string",
+                                "example": "...notifications"
+                              }
+                            },
+                            "createdAt": {
+                              "type": "string",
+                              "example": "2020-05-10T06:49:34+0000"
+                            },
+                            "updatedAt": {
+                              "type": "string",
+                              "example": "2020-05-11T08:22:34+0000"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false
+      },
+      "delete": {
+        "summary": "Delete an Alert",
+        "description": "",
+        "operationId": "delete-alerts-id",
+        "parameters": [
+          {
+            "name": "alertId",
+            "in": "path",
+            "description": "ID of a pre-defined alert",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          },
+          {
+            "name": "Accept-Encoding",
+            "in": "header",
+            "schema": {
+              "type": "string",
+              "default": "gzip"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "204",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Result": {
+                    "value": "{}"
+                  }
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false
+      }
+    },
+    "/insights": {
+      "get": {
+        "summary": "List Insights",
+        "description": "",
+        "operationId": "get-insights",
+        "parameters": [
+          {
+            "name": "Accept-Encoding",
+            "in": "header",
+            "schema": {
+              "type": "string",
+              "default": "gzip"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "200",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Result": {
+                    "value": "{\n    \"data\": {\n        \"insights\": [{\n            \"id\": \"38f689d83c264eb0b084ba095f2ea332\",\n            \"name\": \"Safety Warning\",\n            \"conditions\": {\n                ...conditions\n            }\n        }]\n    },\n    \"links\": {}\n}"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false
+      },
+      "post": {
+        "summary": "Create an Insight",
+        "description": "",
+        "operationId": "post-insights",
+        "parameters": [
+          {
+            "name": "Accept-Encoding",
+            "in": "header",
+            "schema": {
+              "type": "string",
+              "default": "gzip"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "name"
+                ],
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "The name of the insight used when setting alert notifications"
+                  },
+                  "rules": {
+                    "type": "string",
+                    "description": "The [rules](https://docs.tomorrow.io/reference/insights-overview#rules-language) for which the linked locations will be checked. **Either rules or conditions is required** i.e (windSpeed > 30)"
+                  },
+                  "conditions": {
+                    "type": "string",
+                    "description": "The [conditions](https://docs.tomorrow.io/reference/insights-overview#conditions-language-ast-trees) for which the linked locations will be checked. Either rules or conditions is required",
+                    "format": "json"
+                  },
+                  "tags": {
+                    "type": "array",
+                    "description": "Any descriptive tags to be used to filter insights",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "severity": {
+                    "type": "string",
+                    "description": "The code denoting the intensity of impact when conditions occur (extreme, severe, moderate, minor, unknown)",
+                    "default": "unknown"
+                  },
+                  "description": {
+                    "type": "string",
+                    "description": "The description detailing this insight use-case"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "201",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Result": {
+                    "value": "{\n    \"data\": {\n        \"insight\": {\n            \"id\": \"38f689d83c264eb0b084ba095f2ea332\",\n            \"name\": \"Safety Warning\",\n            \"conditions\": {...conditions},\n            \"createdAt\": \"2020-05-10T06:49:34+0000\"\n        }\n    }\n}"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false
+      }
+    },
+    "/insights/{insightId}": {
+      "get": {
+        "summary": "Retrieve an Insight",
+        "description": "",
+        "operationId": "get-insights-id",
+        "parameters": [
+          {
+            "name": "insightId",
+            "in": "path",
+            "description": "ID of a pre-defined insight",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          },
+          {
+            "name": "Accept-Encoding",
+            "in": "header",
+            "schema": {
+              "type": "string",
+              "default": "gzip"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "200",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Result": {
+                    "value": "{\n    \"data\": {\n        \"insight\": {\n            \"id\": \"38f689d83c264eb0b084ba095f2ea332\",\n            \"name\": \"Safety Warning\",\n            \"conditions\": {...conditions},\n            \"createdAt\": \"2020-05-10T06:49:34+0000\",\n            \"updatedAt\": \"2020-05-11T08:22:34+0000\"\n        }\n    }\n}"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false
+      },
+      "put": {
+        "summary": "Update an Insight",
+        "description": "",
+        "operationId": "put-insights-id",
+        "parameters": [
+          {
+            "name": "insightId",
+            "in": "path",
+            "description": "ID of a pre-defined insight",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          },
+          {
+            "name": "Accept-Encoding",
+            "in": "header",
+            "schema": {
+              "type": "string",
+              "default": "gzip"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "The name of the insight used when triggering alert notifications"
+                  },
+                  "rules": {
+                    "type": "string",
+                    "description": "The [rules](https://docs.tomorrow.io/reference/insights-overview#rules-language) for which the linked locations will be checked. i.e (windSpeed > 30)"
+                  },
+                  "conditions": {
+                    "type": "string",
+                    "description": "The [conditions](https://docs.tomorrow.io/reference/insights-overview#conditions-language-ast-trees) for which the linked locations will be checked.",
+                    "format": "json"
+                  },
+                  "tags": {
+                    "type": "array",
+                    "description": "Any descriptive tags to be used to filter insights",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "severity": {
+                    "type": "string",
+                    "description": "The code denoting the intensity of impact when conditions occur (extreme, severe, moderate, minor, unknown)",
+                    "default": "unknown"
+                  },
+                  "description": {
+                    "type": "string",
+                    "description": "The description detailing this insight use-case"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "200",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Result": {
+                    "value": "{\n    \"data\": {\n        \"insight\": {\n            \"id\": \"38f689d83c264eb0b084ba095f2ea332\",\n            \"name\": \"Safety Warning\",\n            \"conditions\": {...conditions},\n            \"createdAt\": \"2020-05-10T06:49:34+0000\",\n            \"updatedAt\": \"2020-05-11T08:22:34+0000\"\n        }\n    }\n}"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false
+      },
+      "delete": {
+        "summary": "Delete an Insight",
+        "description": "",
+        "operationId": "delete-insights-id",
+        "parameters": [
+          {
+            "name": "insightId",
+            "in": "path",
+            "description": "ID of a pre-defined insight",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          },
+          {
+            "name": "Accept-Encoding",
+            "in": "header",
+            "schema": {
+              "type": "string",
+              "default": "gzip"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "204",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Result": {
+                    "value": "{}"
+                  }
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false
+      }
+    },
+    "/locations/{locationId}": {
+      "get": {
+        "summary": "Retrieve a Location",
+        "description": "",
+        "operationId": "get-locations-id",
+        "parameters": [
+          {
+            "name": "locationId",
+            "in": "path",
+            "description": "ID of a pre-defined location",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          },
+          {
+            "name": "Accept-Encoding",
+            "in": "header",
+            "schema": {
+              "type": "string",
+              "default": "gzip"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "200",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Result": {
+                    "value": "{\n    \"data\": {\n        \"location\": {\n            \"id\": \"5e82fb82b66492001218aaf3\",\n            \"name\": \"Tomorrow.io Headquarters\",\n            \"geometry\": {\n                \"type\": \"Point\",\n                \"coordinates\": [42.355440, -71.059910]\n            }\n        }\n    }\n}"
+                  }
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "location": {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "string",
+                              "example": "5e82fb82b66492001218aaf3"
+                            },
+                            "name": {
+                              "type": "string",
+                              "example": "Tomorrow.io Headquarters"
+                            },
+                            "geometry": {
+                              "type": "object",
+                              "properties": {
+                                "type": {
+                                  "type": "string",
+                                  "example": "Point"
+                                },
+                                "coordinates": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "number",
+                                    "example": 42.35544,
+                                    "default": 0
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false
+      },
+      "delete": {
+        "summary": "Delete a Location",
+        "description": "",
+        "operationId": "delete-locations-id",
+        "parameters": [
+          {
+            "name": "locationId",
+            "in": "path",
+            "description": "ID of a pre-defined location",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          },
+          {
+            "name": "Accept-Encoding",
+            "in": "header",
+            "schema": {
+              "type": "string",
+              "default": "gzip"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "204",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Result": {
+                    "value": "{}"
+                  }
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false
+      },
+      "put": {
+        "summary": "Update a Location",
+        "description": "",
+        "operationId": "put-location-id",
+        "parameters": [
+          {
+            "name": "locationId",
+            "in": "path",
+            "description": "ID of a pre-defined location",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          },
+          {
+            "name": "Accept-Encoding",
+            "in": "header",
+            "schema": {
+              "type": "string",
+              "default": "gzip"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "The name of the location. Name or direction parameters must be specified"
+                  },
+                  "direction": {
+                    "type": "number",
+                    "description": "The location direction in degrees clockwise from due north",
+                    "format": "float"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "200",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Result": {
+                    "value": "{\n    \"data\": {\n        \"location\": {\n            \"id\": \"5e82fb82b66492001218aaf3\",\n            \"name\": \"Tomorrow.io Headquarters\",\n            \"geometry\": {\n                \"type\": \"Point\",\n                \"coordinates\": [42.355440, -71.059910]\n            }\n        }\n    }\n}"
+                  }
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "location": {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "string",
+                              "example": "5e82fb82b66492001218aaf3"
+                            },
+                            "name": {
+                              "type": "string",
+                              "example": "Tomorrow.io Headquarters"
+                            },
+                            "geometry": {
+                              "type": "object",
+                              "properties": {
+                                "type": {
+                                  "type": "string",
+                                  "example": "Point"
+                                },
+                                "coordinates": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "number",
+                                    "example": 42.35544,
+                                    "default": 0
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false
+      }
+    },
+    "/locations": {
+      "post": {
+        "summary": "Create a Location",
+        "description": "",
+        "operationId": "post-locations",
+        "parameters": [
+          {
+            "name": "Accept-Encoding",
+            "in": "header",
+            "schema": {
+              "type": "string",
+              "default": "gzip"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "name",
+                  "geometry"
+                ],
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "The name of the location"
+                  },
+                  "geometry": {
+                    "type": "string",
+                    "description": "The GeoJSON geometry representation of the location object",
+                    "format": "json"
+                  },
+                  "tags": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "direction": {
+                    "type": "number",
+                    "description": "The location direction in degrees clockwise from due north",
+                    "format": "float"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "200",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Result": {
+                    "value": "{\n    \"data\": {\n        \"location\": {\n            \"id\": \"5e82fb82b66492001218aaf3\",\n            \"name\": \"Tomorrow.io Headquarters\",\n            \"tags\": [\"John's team\", \"Group 1\"]\n            \"geometry\": {\n                \"type\": \"Point\",\n                \"coordinates\": [42.355440, -71.059910]\n            },\n            \"createdAt\": \"2020-05-10T06:49:34+0000\",\n        }\n    }\n}"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false
+      },
+      "get": {
+        "summary": "List Locations",
+        "description": "",
+        "operationId": "get-locations",
+        "parameters": [
+          {
+            "name": "Accept-Encoding",
+            "in": "header",
+            "schema": {
+              "type": "string",
+              "default": "gzip"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "200",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Result": {
+                    "value": "{\n    \"data\": {\n        \"locations\": [{\n            \"id\": \"5e82fb82b66492001218aaf3\",\n            \"name\": \"Tomorrow.io Headquarters\",\n            \"geometry\": {\n                \"type\": \"Point\",\n                \"coordinates\": [42.355440, -71.059910]\n            }\n        }]\n    },\n    \"links\": {}\n}"
+                  }
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "locations": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "string",
+                                "example": "5e82fb82b66492001218aaf3"
+                              },
+                              "name": {
+                                "type": "string",
+                                "example": "Tomorrow.io Headquarters"
+                              },
+                              "geometry": {
+                                "type": "object",
+                                "properties": {
+                                  "type": {
+                                    "type": "string",
+                                    "example": "Point"
+                                  },
+                                  "coordinates": {
+                                    "type": "array",
+                                    "items": {
+                                      "type": "number",
+                                      "example": 42.35544,
+                                      "default": 0
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "links": {
+                      "type": "object",
+                      "properties": {}
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false
+      }
+    },
+    "/alerts/{alertId}/activate": {
+      "post": {
+        "summary": "Activate an Alert",
+        "description": "",
+        "operationId": "post-alerts-id-activate",
+        "parameters": [
+          {
+            "name": "alertId",
+            "in": "path",
+            "description": "ID of a pre-defined alert",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          },
+          {
+            "name": "Accept-Encoding",
+            "in": "header",
+            "schema": {
+              "type": "string",
+              "default": "gzip"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "204",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Result": {
+                    "value": ""
+                  }
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false
+      }
+    },
+    "/alerts/{alertId}/locations/unlink": {
+      "post": {
+        "summary": "Unlink Locations",
+        "description": "",
+        "operationId": "post-alerts-id-locations-unlink",
+        "parameters": [
+          {
+            "name": "alertId",
+            "in": "path",
+            "description": "ID of a pre-defined alert",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          },
+          {
+            "name": "Accept-Encoding",
+            "in": "header",
+            "schema": {
+              "type": "string",
+              "default": "gzip"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "locations"
+                ],
+                "properties": {
+                  "locations": {
+                    "type": "array",
+                    "description": "The list of Point locations by ID to be unlinked from this alert.",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "204",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Result": {
+                    "value": ""
+                  }
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false
+      }
+    },
+    "/alerts/{alertId}/locations": {
+      "get": {
+        "summary": "Linked Locations",
+        "description": "",
+        "operationId": "post-alerts-id-locations",
+        "parameters": [
+          {
+            "name": "alertId",
+            "in": "path",
+            "description": "ID of a pre-defined alert",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          },
+          {
+            "name": "Accept-Encoding",
+            "in": "header",
+            "schema": {
+              "type": "string",
+              "default": "gzip"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "200",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Result": {
+                    "value": "{\n    \"data\": {\n        \"locations\": [\"5e82fb82b66492001218aaf3\"]\n    }\n}"
+                  }
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "locations": {
+                          "type": "array",
+                          "items": {
+                            "type": "string",
+                            "example": "5e82fb82b66492001218aaf3"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false
+      }
+    },
+    "/alerts/{alertId}/deactivate": {
+      "post": {
+        "summary": "Deactivate an Alert",
+        "description": "",
+        "operationId": "post-alerts-id-deactivate",
+        "parameters": [
+          {
+            "name": "alertId",
+            "in": "path",
+            "description": "ID of a pre-defined alert",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          },
+          {
+            "name": "Accept-Encoding",
+            "in": "header",
+            "schema": {
+              "type": "string",
+              "default": "gzip"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "204",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Result": {
+                    "value": ""
+                  }
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false
+      }
+    },
+    "/alerts/{alertId}/locations/link": {
+      "post": {
+        "summary": "Link Locations",
+        "description": "",
+        "operationId": "post-alerts-id-locations-link",
+        "parameters": [
+          {
+            "name": "alertId",
+            "in": "path",
+            "description": "ID of a pre-defined alert",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          },
+          {
+            "name": "Accept-Encoding",
+            "in": "header",
+            "schema": {
+              "type": "string",
+              "default": "gzip"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "locations"
+                ],
+                "properties": {
+                  "locations": {
+                    "type": "array",
+                    "description": "The list of Locations by ID to be linked to this Alert.",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "204",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Result": {
+                    "value": ""
+                  }
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false
+      }
+    },
+    "/events": {
+      "get": {
+        "summary": "Retrieve Events (Basic)",
+        "description": "",
+        "operationId": "get-events",
+        "parameters": [
+          {
+            "name": "location",
+            "in": "query",
+            "description": "ID of a pre-defined location or latlong string - see [formats](https://docs.tomorrow.io/reference/api-formats#locations)",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "json"
+            }
+          },
+          {
+            "name": "insights",
+            "in": "query",
+            "description": "Pre-defined category names or custom insight IDs",
+            "required": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "name": "buffer",
+            "in": "query",
+            "description": "The buffer around locations, in case of pre-defined insight categories (in km)",
+            "schema": {
+              "type": "number",
+              "format": "float",
+              "default": 1
+            }
+          },
+          {
+            "name": "Accept-Encoding",
+            "in": "header",
+            "schema": {
+              "type": "string",
+              "default": "gzip"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "200",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Result": {
+                    "value": "{\n    \"data\": {\n        \"events\": [\n            {\n                \"insight\": \"fires\",\n                \"startTime\": \"2020-10-13T18:12:00Z\",\n                \"endTime\": \"2020-10-14T15:06:26.261668224Z\",\n                \"updateTime\": \"2020-10-13T18:12:00Z\",\n                \"severity\": \"Unknown\",\n                \"certainty\": \"Likely\",\n                \"urgency\": \"Unknown\",\n                \"eventValues\": {\n                    \"origin\": \"VIIRS\",\n                    \"title\": \"Active Fire\",\n                    \"radiativePower\": 0.9,\n                    \"location\": {\n                        \"type\": \"Point\",\n                        \"coordinates\": [\n                            130.191162109,\n                            47.230289459\n                        ]\n                    },\n                    \"distance\": 0.156,\n                    \"direction\": -7.481822\n                }\n            },\n            {\n                \"insight\": \"38f689d83c264eb0b084ba095f2ea772\",\n                \"startTime\": \"2020-05-10T07:49:34+0000\",\n                \"endTime\": \"2020-05-10T07:49:34+0000\",\n                \"eventValues\": {\n                    \"precipitationIntensity\": 1,\n                    \"mepIndex\": 300\n                }\n            },\n            \"...\"\n        ]\n    }\n}"
+                  }
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "events": {
+                          "type": "array"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false
+      },
+      "post": {
+        "summary": "Retrieve Events (Advanced)",
+        "description": "",
+        "operationId": "post-events",
+        "parameters": [
+          {
+            "name": "Accept-Encoding",
+            "in": "header",
+            "schema": {
+              "type": "string",
+              "default": "gzip"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "insights"
+                ],
+                "properties": {
+                  "location": {
+                    "type": "string",
+                    "description": "ID of a pre-defined location, GeoJSON geometry or latlong array - see [formats](https://docs.tomorrow.io/reference/api-formats#locations)",
+                    "format": "json"
+                  },
+                  "insights": {
+                    "type": "array",
+                    "description": "Pre-defined category names or custom insight IDs",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "buffer": {
+                    "type": "number",
+                    "description": "The buffer around locations, in case of pre-defined insight categories (in km)",
+                    "default": 1,
+                    "format": "float"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "200",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Result": {
+                    "value": "{\n    \"data\": {\n        \"events\": [\n            {\n              \t\"insight\": \"fires\",\n                \"startTime\": \"2020-10-13T18:12:00Z\",\n                \"endTime\": \"2020-10-14T15:06:26.261668224Z\",\n                \"updateTime\": \"2020-10-13T18:12:00Z\",\n                \"severity\": \"Unknown\",\n                \"certainty\": \"Likely\",\n                \"urgency\": \"Unknown\",\n                \"eventValues\": {\n                    \"origin\": \"VIIRS\",\n                    \"title\": \"Active Fire\",\n                    \"radiativePower\": 0.9,\n                    \"location\": {\n                        \"type\": \"Point\",\n                        \"coordinates\": [\n                            130.191162109,\n                            47.230289459\n                        ]\n                    },\n                    \"distance\": 0.156,\n                    \"direction\": -7.481822\n                },\n                \"triggerValues\": {\n                    \"title\": \"Active Fire\",\n                    \"location\": {\n                        \"type\": \"Point\",\n                        \"coordinates\": [\n                            130.191162109,\n                            47.230289459\n                        ]\n                    },\n                    \"distance\": 0.156\n                }\n            },\n            {\n                \"insight\": \"38f689d83c264eb0b084ba095f2ea772\",\n                \"startTime\": \"2020-05-10T07:49:34+0000\",\n                \"endTime\": \"2020-05-10T07:49:34+0000\",\n                \"conditionValues\": {\n                    \"precipitationIntensity\": 1,\n                    \"mepIndex\": 300\n                },\n                \"triggerValues\": {\n                    \"precipitationIntensity\": 1\n                }\n            },\n            \"...\"\n        ]\n    }\n}"
+                  }
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "events": {
+                          "type": "array"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false
+      }
+    },
+    "/locations/tags/remove": {
+      "post": {
+        "summary": "Remove Location Tags",
+        "description": "",
+        "operationId": "remove-location-tags",
+        "parameters": [
+          {
+            "name": "Accept-Encoding",
+            "in": "header",
+            "schema": {
+              "type": "string",
+              "default": "gzip"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "locations",
+                  "tags"
+                ],
+                "properties": {
+                  "locations": {
+                    "type": "array",
+                    "description": "List of location IDs",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "tags": {
+                    "type": "array",
+                    "description": "List of tags to be removed from locations",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "204",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Result": {
+                    "value": "{}"
+                  }
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "400",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Result": {
+                    "value": "{}"
+                  }
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false
+      }
+    },
+    "/notifications": {
+      "get": {
+        "summary": "List Notifications",
+        "description": "",
+        "operationId": "list-notifications-get",
+        "parameters": [
+          {
+            "name": "startTime",
+            "in": "query",
+            "description": "Start time in ISO 8601 format \"2019-03-20T14:09:50Z\"",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "endTime",
+            "in": "query",
+            "description": "End time in ISO 8601 format \"2019-03-20T14:09:50Z\"",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "alertIds",
+            "in": "query",
+            "description": "Filter by pre-defined alert IDs",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "name": "notificationTypes",
+            "in": "query",
+            "description": "Filter by [notification types](ref:overview-notifications#notification-configuration): [PRIOR, START, END,  PUBLISH]",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "name": "recipients",
+            "in": "query",
+            "description": "Filter by user IDs",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "description": "Filter by [status](ref:overview-notifications#notification-status): [ acknowledged, sent ]",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "name": "locationIds",
+            "in": "query",
+            "description": "Filter by pre-defined location IDs",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "name": "Accept-Encoding",
+            "in": "header",
+            "schema": {
+              "type": "string",
+              "default": "gzip"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "200",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Result": {
+                    "value": "{\n    \"data\": {\n        \"notifications\": [\n            {\n                \"id\": \"61d2e5719550aa00085ac502\",\n                \"ownerId\": \"60939e9443c50ec7087a9142\",\n                \"title\": \"Wind Alert - Keep wind catching materials low and flat to avoid catching wind has started\",\n                \"description\": \"\",\n                \"status\": \"sent\",\n                \"accountId\": \"5b168c92a205ab57e15eb52\",\n                \"createdAt\": \"2022-01-03T12:00:49.930Z\",\n                \"isRead\": false,\n                \"updatedAt\": \"2022-01-03T12:00:49.930Z\",\n                \"type\": \"START\",\n                \"value\":15,//field exists only when type is PRIOR\n\n                \"alert\": {\n                    \"type\": \"alert\",\n                    \"name\": \"Fire\",\n                    \"id\": \"e372f34d-743d-46a9-d42d-b0e82ffcb4d5\",\n                    \"creatorId\": \"60939e9443c254005a5e9142\",\n                    \"certainty\": \"Likely\", //field exists only when alert type is swa\n                    \"urgency\": \"Expected\", //field exists only when alert type is swa\n                    \"link\": \"https://alerts.weather.gov/cap/wwacapget.php?\", //field exists only when alert type is swa\n                    \"instructions\": \"...swa instructions\", //field exists only when alert type is swa\n                    \"description\": \"THIS IS A SWA ALERT DESCRIPTION\", //field exists only when alert type is swa\n                    \"title\": \"THIS IS A SWA ALERT TITLE\", //field exists only when alert type is swa\n                    \"event\": {\n                        \"startTime\": \"2021-03-02T16:01:58.677Z\", //field exists only when alert type is swa\n                  \t\t\t\"endTime\": \"2021-03-03T16:01:58.677Z\",//field exists only when alert type is swa\n                        \"expectedTime\": \"2022-01-03T12:00:00.000Z\",  //field exists only when alert type is NOT swa\n                        \"triggeredConditions\": [  //field exists only when alert type is NOT swa\n                            {\n                                \"name\": \"windSpeedMax\",\n                                \"value\": \"5.88\",\n                                \"units\": \"m/s\"\n                            },\n                            {\n                                \"name\": \"windSpeedMin\",\n                                \"value\": \"5.88\",\n                                \"units\": \"m/s\"\n                            }\n                        ]\n                    },\n                    \"insight\": {\n                        \"id\": \"1303dc7f-8c46-4ba7-927f-a53323a6ff6d\",\n                        \"name\": \"Wind Alert - Keep wind catching materials low and flat to avoid catching wind\",\n                        \"severity\": \"minor\"\n                    }\n                },\n                \"locations\": [\n                    {\n                        \"id\": \"6093a8ad5146eab838be422c\",\n                        \"name\": \"Copacabana, Rio de Janeiro - State of Rio de Janeiro, Brazil\",\n                        \"geometryType\": \"Point\" //field exists only when alert type is NOT swa\n                    }\n                ]\n            },\n            \n        ]\n    },\n    \"links\": {\n        \"query\": {},\n        \"self\": \"/v4/notifications?limit=100&marker=9205e5719550aa00085ba8d5&offset=0\",\n        \"next\": \"/v4/notifications?limit=100&marker=9205e5719550aa00085ba8d5&offset=100\"\n    }\n}"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false
+      }
+    },
+    "/insights/tags/remove": {
+      "post": {
+        "summary": "Remove Insight Tags",
+        "description": "",
+        "operationId": "remove-insight-tags",
+        "parameters": [
+          {
+            "name": "Accept-Encoding",
+            "in": "header",
+            "schema": {
+              "type": "string",
+              "default": "gzip"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "insights",
+                  "tags"
+                ],
+                "properties": {
+                  "insights": {
+                    "type": "array",
+                    "description": "List of insight IDs",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "tags": {
+                    "type": "array",
+                    "description": "List of tags to be removed from insights",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "204",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Result": {
+                    "value": "{}"
+                  }
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "400",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Result": {
+                    "value": "{}"
+                  }
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false
+      }
+    },
+    "/insights/tags/add": {
+      "post": {
+        "summary": "Add Insight Tags",
+        "description": "",
+        "operationId": "add-insight-tags",
+        "parameters": [
+          {
+            "name": "Accept-Encoding",
+            "in": "header",
+            "schema": {
+              "type": "string",
+              "default": "gzip"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "insights"
+                ],
+                "properties": {
+                  "insights": {
+                    "type": "array",
+                    "description": "List of insight IDs",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "tags": {
+                    "type": "array",
+                    "description": "List of tags to be added to insights",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "204",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Result": {
+                    "value": "{}"
+                  }
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "400",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Result": {
+                    "value": "{}"
+                  }
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false
+      }
+    },
+    "/locations/tags/add": {
+      "post": {
+        "summary": "Add Location Tags",
+        "description": "",
+        "operationId": "add-location-tags",
+        "parameters": [
+          {
+            "name": "Accept-Encoding",
+            "in": "header",
+            "schema": {
+              "type": "string",
+              "default": "gzip"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "locations",
+                  "tags"
+                ],
+                "properties": {
+                  "locations": {
+                    "type": "array",
+                    "description": "List of location IDs",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "tags": {
+                    "type": "array",
+                    "description": "List of tags to be added to locations",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "204",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Result": {
+                    "value": "{}"
+                  }
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "400",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Result": {
+                    "value": "{}"
+                  }
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false
+      }
+    },
+    "/events-timeline": {
+      "post": {
+        "summary": "On-Demand Events",
+        "description": "",
+        "operationId": "events-timeline",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "location",
+                  "insight"
+                ],
+                "properties": {
+                  "location": {
+                    "type": "string",
+                    "description": "This either get {\"locationId\": \"ID\"} or [Geometry](https://docs.tomorrow.io/reference/locations-overview) i.e        { \"geometry\": {             \"type\": \"Point\",             \"coordinates\": [                 -73.890,                 40.768             ]         }}",
+                    "format": "json"
+                  },
+                  "insight": {
+                    "type": "string",
+                    "description": "This is the conditions to be met. You can either pass here [Rules](https://docs.tomorrow.io/reference/insights-overview#rules-language-recommended) i.e {\"rules\": \"(temperature > 30)\"}. [conditions](https://docs.tomorrow.io/reference/insights-overview#conditions-language-ast-trees) i.e {\"conditions\": \"...\") or InsightId, i.e. {\"insightId\": \"....\"}",
+                    "format": "json"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "200",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Response Events Timeline": {
+                    "value": "{\n    \"data\": {\n        \"eventsTimeline\": {\n            \"geometry\": {\n                \"type\": \"Point\",\n                \"coordinates\": [\n                    -73.892,\n                    40.77\n                ]\n            },\n            \"items\": [\n                {\n                    \"from\": \"2023-07-24T08:00:00Z\",\n                    \"active\": false,\n                    \"actualValues\": {\n                        \"cloudCover\": 98,\n                        \"temperature\": 25.5\n                    },\n                    \"actualTriggerValues\": {\n                        \"cloudCover\": 98,\n                        \"temperature\": 25.5\n                    }\n                }\n            ],\n            \"itemsStartTime\": \"2023-07-24T08:00:00Z\",\n            \"itemsEndTime\": \"2023-07-29T08:00:00Z\"\n        }\n    }\n}"
+                  }
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "eventsTimeline": {
+                          "type": "object",
+                          "properties": {
+                            "geometry": {
+                              "type": "object",
+                              "properties": {
+                                "type": {
+                                  "type": "string",
+                                  "example": "Point"
+                                },
+                                "coordinates": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "number",
+                                    "example": -73.892,
+                                    "default": 0
+                                  }
+                                }
+                              }
+                            },
+                            "items": {
+                              "type": "array",
+                              "items": {
+                                "type": "object",
+                                "properties": {
+                                  "from": {
+                                    "type": "string",
+                                    "example": "2023-07-24T08:00:00Z"
+                                  },
+                                  "active": {
+                                    "type": "boolean",
+                                    "example": false,
+                                    "default": true
+                                  },
+                                  "actualValues": {
+                                    "type": "object",
+                                    "properties": {
+                                      "cloudCover": {
+                                        "type": "integer",
+                                        "example": 98,
+                                        "default": 0
+                                      },
+                                      "temperature": {
+                                        "type": "number",
+                                        "example": 25.5,
+                                        "default": 0
+                                      }
+                                    }
+                                  },
+                                  "actualTriggerValues": {
+                                    "type": "object",
+                                    "properties": {
+                                      "cloudCover": {
+                                        "type": "integer",
+                                        "example": 98,
+                                        "default": 0
+                                      },
+                                      "temperature": {
+                                        "type": "number",
+                                        "example": 25.5,
+                                        "default": 0
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            },
+                            "itemsStartTime": {
+                              "type": "string",
+                              "example": "2023-07-24T08:00:00Z"
+                            },
+                            "itemsEndTime": {
+                              "type": "string",
+                              "example": "2023-07-29T08:00:00Z"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "400",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Result": {
+                    "value": "{}"
+                  }
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false
+      }
+    }
+  },
+  "x-readme": {
+    "headers": []
+  },
+  "x-readme-fauxas": true
+}

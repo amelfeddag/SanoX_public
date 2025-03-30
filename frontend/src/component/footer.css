@@ -1,0 +1,78 @@
+.footer {
+    background-color: #372469;  /* Purple background color */
+    color: white;
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+  }
+  
+  .footer-links {
+    display: flex;
+    gap: 2rem;
+    margin-bottom: 1rem;
+  }
+  
+  .footer-links a {
+    color: white;
+    text-decoration: none;
+    font-size: 1rem;
+    transition: opacity 0.2s ease;
+  }
+  
+  .footer-links a:hover {
+    opacity: 0.8;
+  }
+  
+  .company-info {
+    margin: 0.5rem 0;
+    font-size: 1.1rem;
+  }
+  
+  .social-icons {
+    display: flex;
+    gap: 1.5rem;
+    margin: 1rem 0;
+  }
+  
+  .social-icons a {
+    color: white;
+    font-size: 1.2rem;
+    transition: opacity 0.2s ease;
+  }
+  
+  .social-icons a:hover {
+    opacity: 0.8;
+  }
+  
+  .contact-info {
+    display: flex;
+    gap: 2rem;
+    align-items: center;
+    font-size: 0.9rem;
+  }
+  
+  .contact-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  
+  .location-icon {
+    font-size: 1.2rem;
+  }
+  
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    .footer-links {
+      flex-direction: column;
+      align-items: center;
+      gap: 1rem;
+    }
+    
+    .contact-info {
+      flex-direction: column;
+      gap: 1rem;
+    }
+  }
