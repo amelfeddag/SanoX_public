@@ -33,7 +33,7 @@
     "connect-redis": "^7.1.1",
     "content-disposition": "^0.5.4",
     "content-type": "^1.0.5",
-    "cookie": "^0.6.0",
+    "cookie": "^1.0.2",
     "cookie-signature": "^1.0.6",
     "core-util-is": "^1.0.3",
     "cors": "^2.8.5",
@@ -156,7 +156,7 @@
     "utils-merge": "^1.0.1",
     "uuid": "^10.0.0",
     "vary": "^1.1.2",
-    "vercel": "^37.1.0",
+    "vercel": "^41.0.2",
     "xtend": "^4.0.2"
   },
   "scripts": {
