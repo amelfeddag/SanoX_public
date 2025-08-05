@@ -86,9 +86,15 @@ const register = async (req, res) => {
 /***************************************************************************************************************************************************** */
 
 // ✅ **Login User**
+// const login = async(req , res) =>{
+//     console.log('rani nmchi');
+// }
 const login = async (req, res) => {
     try {
         console.log('Login request received:', req.body);
+        console.log('Email:', req.body.email);
+        console.log('Password:', req.body.password);
+
 
         const { email, password } = req.body;
 
@@ -96,7 +102,7 @@ const login = async (req, res) => {
         const { data: users, error: userError } = await supabase
             .from('Users')
             .select('*')
-            .eq('email', email);
+            .eq('email', email);a
 
         if (userError) {
             console.error('Error fetching user:', userError);

@@ -144,6 +144,8 @@
     "string_decoder": "^1.1.1",
     "stripe": "^16.2.0",
     "supports-color": "^5.5.0",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^5.0.1",
     "to-regex-range": "^5.0.1",
     "toidentifier": "^1.0.1",
     "touch": "^3.1.1",

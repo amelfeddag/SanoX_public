@@ -4,6 +4,7 @@ import helmet from 'helmet';
 import passport from 'passport';
 import session from 'express-session';
 import 'express-async-errors';
+import {specs , swaggerUi} from './swagger.js';
 
 import notFoundMiddleware from './Middleware/not-found.js';
 import errorHandlerMiddleware from './Middleware/error-handler.js';
@@ -38,6 +39,8 @@ app.use(passport.session());
 // Routes
 app.get('/', (req, res) => res.json({ message: 'SanoX API' }));
 app.use('/api', routes);
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
+
 
 // Error handling
 app.use(notFoundMiddleware);
@@ -47,4 +50,5 @@ app.use(errorHandlerMiddleware);
 const port = process.env.PORT || 8081;
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
+  console.log('ff');
 });
