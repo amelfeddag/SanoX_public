@@ -47,8 +47,7 @@ app.use(notFoundMiddleware);
 app.use(errorHandlerMiddleware);
 
 // Start the server
-const port = process.env.PORT || 8081;
+const port = process.env.PORT || 8082;
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
-  console.log('ff');
 });

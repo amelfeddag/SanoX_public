@@ -2,7 +2,6 @@ import { body, validationResult } from 'express-validator';
 
 // Middleware for validating request data
 const validateRequest = (validations) => {
-  console.log('rani hna login')
   return async (req, res, next) => {
     await Promise.all(validations.map(validation => validation.run(req)));
     const errors = validationResult(req);
@@ -13,18 +12,75 @@ const validateRequest = (validations) => {
   };
 };
 
-const validateRegister = [
-  //body('eMail').isEmail().withMessage('Valid email is required').normalizeEmail(),
+// const validateRegister = [
+//   //body('eMail').isEmail().withMessage('Valid email is required').normalizeEmail(),
+//   body('password')
+//     .isLength({ min: 8 }).withMessage('Password must be at least 8 characters long')
+//     .matches(/[0-9]/).withMessage('Password must contain a number')
+//     .matches(/[a-z]/).withMessage('Password must contain a lowercase letter')
+//     .matches(/[A-Z]/).withMessage('Password must contain an uppercase letter')
+//     .matches(/[!@#$%^&*(),.?"':;{}|<>-_]/).withMessage('Password must contain a special character'),
+//   body('firstName').notEmpty().withMessage('First name is required'),
+//   body('lastName').notEmpty().withMessage('Last name is required'),
+//   body('country').notEmpty().withMessage('Country is required'),
+//   body('phoneNumber').matches(/^\+?[1-9]\d{1,14}$/).withMessage('Phone number must be in the correct international format'),
+// ];
+const validatePatientRegister = [
+  body('name')
+    .trim()
+    .notEmpty()
+    .withMessage('Name is required')
+    .isLength({ min: 2, max: 255 })
+    .withMessage('Name must be between 2 and 255 characters'),
+    
+  body('email')
+    .isEmail()
+    .withMessage('Please provide a valid email')
+    .normalizeEmail()
+    .isLength({ max: 255 })
+    .withMessage('Email must not exceed 255 characters'),
+    
   body('password')
-    .isLength({ min: 8 }).withMessage('Password must be at least 8 characters long')
-    .matches(/[0-9]/).withMessage('Password must contain a number')
-    .matches(/[a-z]/).withMessage('Password must contain a lowercase letter')
-    .matches(/[A-Z]/).withMessage('Password must contain an uppercase letter')
-    .matches(/[!@#$%^&*(),.?"':;{}|<>-_]/).withMessage('Password must contain a special character'),
-  body('firstName').notEmpty().withMessage('First name is required'),
-  body('lastName').notEmpty().withMessage('Last name is required'),
-  body('country').notEmpty().withMessage('Country is required'),
-  body('phoneNumber').matches(/^\+?[1-9]\d{1,14}$/).withMessage('Phone number must be in the correct international format'),
+    .isLength({ min: 8 })
+    .withMessage('Password must be at least 8 characters long')
+    .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]/)
+    .withMessage('Password must contain at least one lowercase letter, one uppercase letter, one number, and one special character'),
+    
+  body('phone')
+    .optional()
+    .isMobilePhone()
+    .withMessage('Please provide a valid phone number'),
+    
+  body('dateOfBirth')
+    .optional()
+    .isISO8601()
+    .withMessage('Please provide a valid date of birth (YYYY-MM-DD)')
+    .custom((value) => {
+      if (value) {
+        const birthDate = new Date(value);
+        const today = new Date();
+        const age = today.getFullYear() - birthDate.getFullYear();
+        if (age < 0 || age > 150) {
+          throw new Error('Please provide a valid date of birth');
+        }
+      }
+      return true;
+    }),
+    
+  body('address')
+    .optional()
+    .isLength({ max: 1000 })
+    .withMessage('Address must not exceed 1000 characters'),
+    
+  body('emergencyContact')
+    .optional()
+    .isLength({ max: 255 })
+    .withMessage('Emergency contact must not exceed 255 characters'),
+    
+  body('medicalHistory')
+    .optional()
+    .isLength({ max: 2000 })
+    .withMessage('Medical history must not exceed 2000 characters')
 ];
 
 const validateLogin = [
@@ -94,7 +150,7 @@ const validateUpdateSubscriptionType = [
 
 export {
   validateRequest,
-  validateRegister,
+  validatePatientRegister,
   validateLogin,
   validateVerifyOTP,
   validateForgotPassword,

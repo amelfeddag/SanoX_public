@@ -1,6 +1,6 @@
 import express from 'express';
-import { register, login, verifyUserEmail,  forgotPassword, resetPassword } from '../Controllers/auth.controller.js';
-import { validateRequest ,validateRegister , validateLogin, validateVerifyOTP, validateForgotPassword, validateResetPassword } from '../Middleware/validationMiddleware.js';
+import { registerPatient, login, verifyUserEmail,  forgotPassword } from '../Controllers/auth.controller.js';
+import { validateRequest ,validatePatientRegister , validateLogin, validateVerifyOTP, validateForgotPassword, validateResetPassword } from '../Middleware/validationMiddleware.js';
 
 import authenticateUser from '../Middleware/authMiddleware.js';
 
@@ -48,22 +48,21 @@ const router = express.Router();
  */
 
 
-
 /**
- * @swagger
+ @swagger
  * /api/auth/register:
  *   post:
- *     summary: Register a new user
+ *     summary: Register a new patient
  *     tags: [Authentication]
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/RegisterRequest'
+ *             $ref: '#/components/schemas/PatientRegisterRequest'
  *     responses:
  *       201:
- *         description: User created successfully
+ *         description: Patient account created successfully
  *         content:
  *           application/json:
  *             schema:
@@ -71,11 +70,30 @@ const router = express.Router();
  *               properties:
  *                 message:
  *                   type: string
- *                   example: 'User created successfully, please verify your email.'
+ *                   example: 'Patient account created successfully'
+ *                 user:
+ *                   type: object
+ *                   properties:
+ *                     id:
+ *                       type: string
+ *                       format: uuid
+ *                     email:
+ *                       type: string
+ *                     userType:
+ *                       type: string
+ *                       example: 'patient'
+ *                 patient:
+ *                   type: object
+ *                   properties:
+ *                     id:
+ *                       type: string
+ *                       format: uuid
+ *                     name:
+ *                       type: string
+ *                     phone:
+ *                       type: string
  *       400:
- *         $ref: '#/components/responses/ValidationError'
- *       409:
- *         description: Email already exists
+ *         description: Validation error or email already exists
  *         content:
  *           application/json:
  *             schema:
@@ -87,6 +105,7 @@ const router = express.Router();
  *       500:
  *         description: Internal server error
  */
+
 
 /**
  * @swagger
@@ -180,9 +199,9 @@ const router = express.Router();
  *         description: Invalid or expired token
  */
 router.post('/login' ,validateRequest(validateLogin), login);
-router.post('/register' ,validateRequest(validateRegister), register);
+router.post('/registerPatient' ,validateRequest(validatePatientRegister), registerPatient);
 router.get('/register/verify/:token', verifyUserEmail);
 router.post('/forgot-password', validateRequest(validateForgotPassword), forgotPassword);
-router.put('/reset-password/:token', validateRequest(validateResetPassword), resetPassword);
+// router.put('/reset-password/:token', validateRequest(validateResetPassword), resetPassword);
 
 export default router;

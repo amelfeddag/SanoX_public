@@ -9,13 +9,23 @@ import { StatusCodes } from 'http-status-codes';
 dotenv.config();
 
 /***************************************************************************************************************************************************** */
-const register = async (req, res) => {
+
+const registerPatient = async (req, res) => {
     try {
-        console.log('Register request received:', req.body);
+        console.log('Patient register request received:', req.body);
 
-        const { firstName, lastName, country, phoneNumber, email, password } = req.body;
+        const { 
+            name, 
+            email, 
+            password, 
+            phone, 
+            dateOfBirth, 
+            address, 
+            emergencyContact, 
+            medicalHistory 
+        } = req.body;
 
-        // Check if email already exists
+        // Check if email already exists in users table
         console.log('Checking if email already exists:', email);
         const { data: existingUser, error: findError } = await supabase
             .from('users')
@@ -23,69 +33,407 @@ const register = async (req, res) => {
             .eq('email', email)
             .single();
 
-        if (findError) {
+        if (findError && findError.code !== 'PGRST116') {
+            // PGRST116 is "not found" which is what we want
             console.error('Error checking existing user:', findError);
+            throw findError;
         }
 
         if (existingUser) {
             console.warn('E-mail already exists:', email);
-            return res.status(StatusCodes.BAD_REQUEST).json({ error: 'E-mail already exists' });
+            return res.status(StatusCodes.BAD_REQUEST).json({ 
+                error: 'E-mail already exists' 
+            });
         }
 
-        // Hash password
-        console.log('Hashing password for new user');
+        //hash psswd
+        console.log('Hashing password for new patient');
         const hashedPassword = await bcrypt.hash(password, 10);
-        const user_id = uuidv4();
+        const userId = uuidv4();
+        const patientId = uuidv4();
 
-        // Insert user into Supabase
-        console.log('Inserting new user into database:', { user_id, email });
-        const { error: insertError } = await supabase
+     
+        console.log('Creating user account:', { userId, email });
+        const { data: newUser, error: userInsertError } = await supabase
             .from('users')
             .insert([
                 {
-                    user_id,
-                    firstname: firstName,  // Fixing field names
-                    lastname: lastName,
-                    country,
-                    phonenumber: phoneNumber,  // Fixing phone number
+                    id: userId,
                     email,
-                    password: hashedPassword,
-                    isverified: false,
-                    role: 'DOCTOR'
+                    password_hash: hashedPassword,
+                    user_type: 'patient'
                 }
-            ]);
+            ])
+            .select()
+            .single();
 
-        if (insertError) {
-            console.error('Error inserting user:', insertError);
-            throw insertError;
+        if (userInsertError) {
+            console.error('Error creating user:', userInsertError);
+            throw userInsertError;
         }
 
-        // Generate verification token
-        console.log('Generating verification token for user:', user_id);
-        const token = jwt.sign({ user_id }, process.env.JWT_SECRET, { expiresIn: '10m' });
+        
+        console.log('Creating patient profile:', { patientId, userId });
+        const { data: newPatient, error: patientInsertError } = await supabase
+            .from('patients')
+            .insert([
+                {
+                    id: patientId,
+                    user_id: userId,
+                    name,
+                    phone: phone || null,
+                    date_of_birth: dateOfBirth || null,
+                    address: address || null,
+                    emergency_contact: emergencyContact || null,
+                    medical_history: medicalHistory || null
+                }
+            ])
+            .select()
+            .single();
 
-        // Send verification email
-        console.log('Sending verification email to:', email);
-        await sendEmail(email, token, 'confirmation');
+        if (patientInsertError) {
+            console.error('Error creating patient profile:', patientInsertError);
+            
+            // Cleanup: Delete the user if patient creation failed
+            await supabase
+                .from('users')
+                .delete()
+                .eq('id', userId);
+                
+            throw patientInsertError;
+        }
 
-        // Log history
-        console.log('Logging account creation for user:', user_id);
-        await supabase
-            .from('history')
-            .insert([{ action_id: uuidv4(), user_id, action: 'Create Account' }]);
+        // Generate verification token (optional - remove if not using email verification)
+        console.log('Generating verification token for patient:', userId);
+        const token = jwt.sign({ user_id: userId }, process.env.JWT_SECRET, { expiresIn: '10m' });
 
-        res.status(StatusCodes.CREATED).json({ message: 'User created successfully, please verify your email.' });
+        // Send verification email (optional)
+        // console.log('Sending verification email to:', email);
+        // await sendEmail(email, token, 'confirmation');
+
+        // For now, let's skip email verification and create active account
+        console.log('Patient registered successfully:', { userId, patientId });
+
+        res.status(StatusCodes.CREATED).json({ 
+            message: 'Patient account created successfully',
+            user: {
+                id: userId,
+                email: newUser.email,
+                userType: newUser.user_type
+            },
+            patient: {
+                id: patientId,
+                name: newPatient.name,
+                phone: newPatient.phone
+            }
+        });
 
     } catch (error) {
-        console.error('Error during registration:', error);
-        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: 'Internal Server Error' });
+        console.error('Error during patient registration:', error);
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ 
+            error: 'Internal Server Error',
+            details: error.message 
+        });
     }
 };
+
+/***************************************************************************************************************************************************** */
+
+// const login = async (req, res) => {
+//     try {
+//         console.log('login request received:', req.body);
+
+//         const { email, password } = req.body;
+
+//         console.log('Fetching user from database:', email);
+//         // Get user with patient data
+//         const { data: userData, error: userError } = await supabase
+//             .from('users')
+//             .select(`
+//                 id,
+//                 email,
+//                 password_hash,
+//                 user_type,
+//                 created_at,
+//                 patients (
+//                     id,
+//                     name,
+//                     phone,
+//                     date_of_birth,
+//                     address,
+//                     emergency_contact
+//                 )
+//             `)
+//             .eq('email', email)
+//             .eq('user_type', 'patient')
+//             .single();
+
+//         if (userError || !userData) {
+//             console.warn('Invalid email or not a user:', email);
+//             return res.status(StatusCodes.UNAUTHORIZED).json({ 
+//                 error: 'Invalid email or password' 
+//             });
+//         }
+
+//         // Check password
+//         console.log('Checking password for :', email);
+//         const isCorrectPassword = await bcrypt.compare(password, userData.password_hash);
+//         if (!isCorrectPassword) {
+//             console.warn('Invalid password attempt :', email);
+//             return res.status(StatusCodes.UNAUTHORIZED).json({ 
+//                 error: 'Invalid email or password' 
+//             });
+//         }
+
+//         // Check if patient profile exists
+//         if (!userData.patients || userData.patients.length === 0) {
+//             console.error('Patient profile not found for user:', userData.id);
+//             return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ 
+//                 error: 'Patient profile not found' 
+//             });
+//         }
+
+//         const patient = userData.patients[0];
+
+//         // Update last login (you might want to add this field to your schema)
+//         console.log('Patient logged in successfully:', userData.id);
+
+//         // Generate JWT
+//         console.log('Generating JWT token for patient:', userData.id);
+//         const token = jwt.sign(
+//             { 
+//                 user_id: userData.id, 
+//                 patient_id: patient.id,
+//                 user_type: 'patient' 
+//             }, 
+//             process.env.JWT_SECRET, 
+//             { expiresIn: '7d' }
+//         );
+
+//         res.status(StatusCodes.OK).json({ 
+//             message: 'Logged in successfully!', 
+//             token,
+//             user: {
+//                 id: userData.id,
+//                 email: userData.email,
+//                 userType: userData.user_type
+//             },
+//             patient: {
+//                 id: patient.id,
+//                 name: patient.name,
+//                 phone: patient.phone,
+//                 dateOfBirth: patient.date_of_birth,
+//                 address: patient.address,
+//                 emergencyContact: patient.emergency_contact
+//             }
+//         });
+
+//     } catch (error) {
+//         console.error('Error during patient login:', error);
+//         res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ 
+//             error: 'Internal Server Error',
+//             details: error.message 
+//         });
+//     }
+// };
+
+// /***************************************************************************************************************************************************** */
+
+// const verifyUserEmail = async (req, res) => {
+//     try {
+//         console.log('Verify email request received with token:', req.params.token);
+
+//         const token = req.params.token;
+//         const payload = jwt.verify(token, process.env.JWT_SECRET);
+//         const user_id = payload.user_id;
+
+//         console.log('Updating verification status for user:', user_id);
+//         const { error: updateError } = await supabase
+//             .from('users')
+//             .update({ 
+//                 updated_at: new Date().toISOString() 
+//                 // Add email_verified field to your schema if you want email verification
+//             })
+//             .eq('id', user_id);
+
+//         if (updateError) {
+//             console.error('Error updating user verification:', updateError);
+//             throw updateError;
+//         }
+
+//         // Redirect to success page
+//         return res.redirect('https://yourfrontend.com/auth/email-verified-successfully');
+
+//     } catch (error) {
+//         console.error('Error verifying email:', error);
+//         res.status(400).json({ error: 'Invalid or expired token' });
+//     }
+// };
+
+/***************************************************************************************************************************************************** */
+
+
+// const forgotPassword = async (req, res) => {
+//     try {
+//         console.log('Forgot password request received:', req.body);
+
+//         const { email } = req.body;
+
+//         console.log('Checking if patient email exists:', email);
+//         const { data: user, error: findError } = await supabase
+//             .from('users')
+//             .select('id')
+//             .eq('email', email)
+//             .eq('user_type', 'patient')
+//             .single();
+
+//         if (findError || !user) {
+//             console.warn('Invalid email for password reset:', email);
+//             return res.status(StatusCodes.BAD_REQUEST).json({ 
+//                 error: 'Invalid email' 
+//             });
+//         }
+
+//         console.log('Generating reset token for patient:', user.id);
+//         const token = jwt.sign({ user_id: user.id }, process.env.JWT_SECRET, { expiresIn: '10m' });
+
+//         console.log('Sending password reset email to:', email);
+//         await sendEmail(email, token, 'resetPassword');
+
+//         res.status(StatusCodes.OK).json({ 
+//             message: 'Reset password link sent to your email' 
+//         });
+
+//     } catch (error) {
+//         console.error('Error during forgot password:', error);
+//         res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ 
+//             error: 'Internal Server Error' 
+//         });
+//     }
+// };
+
+/***************************************************************************************************************************************************** */
+
+// // ✅ **Reset Password** (Updated for new schema)
+// const resetPassword = async (req, res) => {
+//     try {
+//         console.log('Reset password request received with token:', req.params.token);
+
+//         const token = req.params.token;
+//         const { newPassword } = req.body;
+
+//         console.log('Verifying token');
+//         const payload = jwt.verify(token, process.env.JWT_SECRET);
+//         const user_id = payload.user_id;
+
+//         console.log('Hashing new password');
+//         const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+//         console.log('Updating password for user:', user_id);
+//         const { error: updateError } = await supabase
+//             .from('users')
+//             .update({ 
+//                 password_hash: hashedPassword,
+//                 updated_at: new Date().toISOString()
+//             })
+//             .eq('id', user_id);
+
+//         if (updateError) {
+//             console.error('Error updating password:', updateError);
+//             throw updateError;
+//         }
+
+//         res.status(StatusCodes.OK).json({ 
+//             message: 'Password updated successfully' 
+//         });
+
+//     } catch (error) {
+//         console.error('Error during password reset:', error);
+//         res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ 
+//             error: 'Internal Server Error' 
+//         });
+//     }
+// };
+
+/***************************************************************************************************************************************************** */
+
+// const register = async (req, res) => {
+//     try {
+//         console.log('Register request received:', req.body);
+
+//         const { firstName, lastName, country, phoneNumber, email, password } = req.body;
+
+//         // Check if email already exists
+//         console.log('Checking if email already exists:', email);
+//         const { data: existingUser, error: findError } = await supabase
+//             .from('users')
+//             .select('email')
+//             .eq('email', email)
+//             .single();
+
+//         if (findError) {
+//             console.error('Error checking existing user:', findError);
+//         }
+
+//         if (existingUser) {
+//             console.warn('E-mail already exists:', email);
+//             return res.status(StatusCodes.BAD_REQUEST).json({ error: 'E-mail already exists' });
+//         }
+
+//         // Hash password
+//         console.log('Hashing password for new user');
+//         const hashedPassword = await bcrypt.hash(password, 10);
+//         const user_id = uuidv4();
+
+//         // Insert user into Supabase
+//         console.log('Inserting new user into database:', { user_id, email });
+//         const { error: insertError } = await supabase
+//             .from('users')
+//             .insert([
+//                 {
+//                     user_id,
+//                     firstname: firstName,  // Fixing field names
+//                     lastname: lastName,
+//                     country,
+//                     phonenumber: phoneNumber,  // Fixing phone number
+//                     email,
+//                     password: hashedPassword,
+//                     isverified: false,
+//                     role: 'DOCTOR'
+//                 }
+//             ]);
+
+//         if (insertError) {
+//             console.error('Error inserting user:', insertError);
+//             throw insertError;
+//         }
+
+//         // Generate verification token
+//         console.log('Generating verification token for user:', user_id);
+//         const token = jwt.sign({ user_id }, process.env.JWT_SECRET, { expiresIn: '10m' });
+
+//         // Send verification email
+//         console.log('Sending verification email to:', email);
+//         await sendEmail(email, token, 'confirmation');
+
+//         // Log history
+//         console.log('Logging account creation for user:', user_id);
+//         await supabase
+//             .from('history')
+//             .insert([{ action_id: uuidv4(), user_id, action: 'Create Account' }]);
+
+//         res.status(StatusCodes.CREATED).json({ message: 'User created successfully, please verify your email.' });
+
+//     } catch (error) {
+//         console.error('Error during registration:', error);
+//         res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: 'Internal Server Error' });
+//     }
+// };
 
 
 /***************************************************************************************************************************************************** */
 
-// ✅ **Login User**
+//  **Login User**
 // const login = async(req , res) =>{
 //     console.log('rani nmchi');
 // }
@@ -156,7 +504,7 @@ const login = async (req, res) => {
 
 /***************************************************************************************************************************************************** */
 
-// ✅ **Verify User Email**
+
 const verifyUserEmail = async (req, res) => {
     try {
         console.log('Verify email request received with token:', req.params.token);
@@ -186,7 +534,6 @@ const verifyUserEmail = async (req, res) => {
 
 /***************************************************************************************************************************************************** */
 
-// ✅ **Forgot Password**
 const forgotPassword = async (req, res) => {
     try {
         console.log('Forgot password request received:', req.body);
@@ -222,40 +569,40 @@ const forgotPassword = async (req, res) => {
 
 /***************************************************************************************************************************************************** */
 
-// ✅ **Reset Password**
-const resetPassword = async (req, res) => {
-    try {
-        console.log('Reset password request received with token:', req.params.token);
+// // **Reset Password**
+// const resetPassword = async (req, res) => {
+//     try {
+//         console.log('Reset password request received with token:', req.params.token);
 
-        const token = req.params.token;
-        const { newPassword } = req.body;
+//         const token = req.params.token;
+//         const { newPassword } = req.body;
 
-        console.log('Verifying token');
-        const payload = jwt.verify(token, process.env.JWT_SECRET);
-        const user_id = payload.user_id;
+//         console.log('Verifying token');
+//         const payload = jwt.verify(token, process.env.JWT_SECRET);
+//         const user_id = payload.user_id;
 
-        console.log('Hashing new password');
-        const hashedPassword = await bcrypt.hash(newPassword, 10);
+//         console.log('Hashing new password');
+//         const hashedPassword = await bcrypt.hash(newPassword, 10);
 
-        console.log('Updating password for user:', user_id);
-        await supabase
-            .from('Users')
-            .update({ password: hashedPassword })
-            .eq('user_id', user_id);
+//         console.log('Updating password for user:', user_id);
+//         await supabase
+//             .from('Users')
+//             .update({ password: hashedPassword })
+//             .eq('user_id', user_id);
 
-        console.log('Logging password reset action for user:', user_id);
-        await supabase
-            .from('History')
-            .insert([{ action_id: uuidv4(), user_id, action: 'Reset Password' }]);
+//         console.log('Logging password reset action for user:', user_id);
+//         await supabase
+//             .from('History')
+//             .insert([{ action_id: uuidv4(), user_id, action: 'Reset Password' }]);
 
-        res.status(StatusCodes.OK).json({ message: 'Password updated successfully' });
+//         res.status(StatusCodes.OK).json({ message: 'Password updated successfully' });
 
-    } catch (error) {
-        console.error('Error during password reset:', error);
-        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: 'Internal Server Error' });
-    }
-};
+//     } catch (error) {
+//         console.error('Error during password reset:', error);
+//         res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: 'Internal Server Error' });
+//     }
+// };
 
 /***************************************************************************************************************************************************** */
 
-export { register, login, verifyUserEmail, forgotPassword, resetPassword };
+export { registerPatient, login, verifyUserEmail, forgotPassword};
