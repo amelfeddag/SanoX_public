@@ -1,21 +1,16 @@
-// import { createClient } from '@supabase/supabase-js';
-// import dotenv from 'dotenv';
+// backend/config/supabaseClient.js
+import { createClient } from '@supabase/supabase-js';
+import dotenv from 'dotenv';
 
-// dotenv.config();
+dotenv.config();
 
-// const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE);
+const supabaseUrl = process.env.SUPABASE_URL;
+const supabaseKey = process.env.SUPABASE_ANON_KEY;
 
-// export default supabase;
+if (!supabaseUrl || !supabaseKey) {
+    throw new Error('Missing Supabase environment variables');
+}
 
-const supabase = {
-  from: () => ({
-    select: () => Promise.resolve({ data: [], error: null }),
-  }),
-  auth: {
-    signInWithPassword: () => Promise.resolve({ data: null, error: null }),
-    signUp: () => Promise.resolve({ data: null, error: null }),
-    getSession: () => Promise.resolve({ data: null, error: null }),
-  },
-};
+const supabase = createClient(supabaseUrl, supabaseKey);
 
 export default supabase;

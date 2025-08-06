@@ -1,5 +1,38 @@
+// import jwt from 'jsonwebtoken';
+// import { pool } from '../DB/connect.js';
+// import UnauthenticatedError from '../Errors/UnauthenticatedError.js';
+
+// const authenticateUser = async (req, res, next) => {
+//   const authHeader = req.headers.authorization;
+
+//   if (!authHeader || !authHeader.startsWith('Bearer ')) {
+//     throw new UnauthenticatedError('Authentication invalid');
+//   }
+
+//   const token = authHeader.split(' ')[1];
+
+//   try {
+//     const payload = jwt.verify(token, process.env.JWT_SECRET);
+
+//     // Check if the user exists
+//     const [user] = await pool.query('SELECT 1 FROM Users WHERE user_id = ?', [payload.user_id]);
+
+//     if (!user) {
+//       throw new UnauthenticatedError('Authentication invalid');
+//     }
+    
+//     // Attach the user to the request object
+//     req.user = { id: payload.user_id };
+
+//     next();
+//   } catch (error) {
+//     throw new UnauthenticatedError('Authentication invalid');
+//   }
+// };
+
+// export default authenticateUser;
 import jwt from 'jsonwebtoken';
-import { pool } from '../DB/connect.js';
+import supabase from '../config/supabaseClient.js';
 import UnauthenticatedError from '../Errors/UnauthenticatedError.js';
 
 const authenticateUser = async (req, res, next) => {
@@ -14,20 +47,83 @@ const authenticateUser = async (req, res, next) => {
   try {
     const payload = jwt.verify(token, process.env.JWT_SECRET);
 
-    // Check if the user exists
-    const [user] = await pool.query('SELECT 1 FROM Users WHERE user_id = ?', [payload.user_id]);
+    // Check if the user exists in the users table
+    const { data: user, error: userError } = await supabase
+      .from('users')
+      .select('id, email, user_type')
+      .eq('id', payload.user_id)
+      .single();
 
-    if (!user) {
+    if (userError || !user) {
       throw new UnauthenticatedError('Authentication invalid');
     }
     
-    // Attach the user to the request object
-    req.user = { id: payload.user_id };
+    // atach the user info to the request object
+    req.user = { 
+      id: payload.user_id,
+      email: user.email,
+      userType: user.user_type,
+      patientId: payload.patient_id || null
+    };
 
     next();
   } catch (error) {
+    console.error('Authentication error:', error);
     throw new UnauthenticatedError('Authentication invalid');
   }
 };
 
+// Middleware specifically for patients
+const authenticatePatient = async (req, res, next) => {
+  const authHeader = req.headers.authorization;
+
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    throw new UnauthenticatedError('Authentication invalid');
+  }
+
+  const token = authHeader.split(' ')[1];
+
+  try {
+    const payload = jwt.verify(token, process.env.JWT_SECRET);
+
+    // heck if the user exists and is a patient
+    const { data: userData, error: userError } = await supabase
+      .from('users')
+      .select(`
+        id,
+        email,
+        user_type,
+        patients (
+          id,
+          name
+        )
+      `)
+      .eq('id', payload.user_id)
+      .eq('user_type', 'patient')
+      .single();
+
+    if (userError || !userData || !userData.patients || userData.patients.length === 0) {
+      throw new UnauthenticatedError('Patient authentication required');
+    }
+    
+    // Attach the user and patient info to the request object
+    req.user = { 
+      id: userData.id,
+      email: userData.email,
+      userType: userData.user_type
+    };
+    
+    req.patient = {
+      id: userData.patients[0].id,
+      name: userData.patients[0].name
+    };
+
+    next();
+  } catch (error) {
+    console.error('Patient authentication error:', error);
+    throw new UnauthenticatedError('Patient authentication invalid');
+  }
+};
+
 export default authenticateUser;
+export { authenticatePatient };
