@@ -55,7 +55,7 @@
     "express": "^4.21.0",
     "express-async-errors": "^3.1.1",
     "express-session": "^1.18.0",
-    "express-validator": "^7.1.0",
+    "express-validator": "^7.2.1",
     "fill-range": "^7.1.1",
     "finalhandler": "^1.2.0",
     "follow-redirects": "^1.15.6",

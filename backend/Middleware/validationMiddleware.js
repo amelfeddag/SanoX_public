@@ -12,19 +12,6 @@ const validateRequest = (validations) => {
   };
 };
 
-// const validateRegister = [
-//   //body('eMail').isEmail().withMessage('Valid email is required').normalizeEmail(),
-//   body('password')
-//     .isLength({ min: 8 }).withMessage('Password must be at least 8 characters long')
-//     .matches(/[0-9]/).withMessage('Password must contain a number')
-//     .matches(/[a-z]/).withMessage('Password must contain a lowercase letter')
-//     .matches(/[A-Z]/).withMessage('Password must contain an uppercase letter')
-//     .matches(/[!@#$%^&*(),.?"':;{}|<>-_]/).withMessage('Password must contain a special character'),
-//   body('firstName').notEmpty().withMessage('First name is required'),
-//   body('lastName').notEmpty().withMessage('Last name is required'),
-//   body('country').notEmpty().withMessage('Country is required'),
-//   body('phoneNumber').matches(/^\+?[1-9]\d{1,14}$/).withMessage('Phone number must be in the correct international format'),
-// ];
 const validatePatientRegister = [
   body('name')
     .trim()
@@ -41,11 +28,11 @@ const validatePatientRegister = [
     .withMessage('Email must not exceed 255 characters'),
     
   body('password')
-    .isLength({ min: 8 })
-    .withMessage('Password must be at least 8 characters long')
-    .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]/)
-    .withMessage('Password must contain at least one lowercase letter, one uppercase letter, one number, and one special character'),
-    
+  .isLength({ min: 8 })
+  .withMessage('Password must be at least 8 characters long')
+  .matches(/^(?=.*[A-Z])(?=.*[@$!%*?&]).{8,}$/)
+  .withMessage('Password must contain at least one uppercase letter and one special character'),
+
   body('phone')
     .optional()
     .isMobilePhone()
@@ -88,8 +75,18 @@ const validateLogin = [
   body('password').notEmpty().withMessage('Password is required')
 ];
 
+const validateEmailVerification = [
+  body('email').isEmail().withMessage('Valid email is required').normalizeEmail(),
+  body('otp')
+    .toInt()
+    .isNumeric()
+    .withMessage('OTP must be numeric')
+    .isLength({ min: 6, max: 6 })
+    .withMessage('OTP must be exactly 6 digits')
+];
+
 const validateVerifyOTP = [
-  body('otp').isNumeric().withMessage('OTP must be a number')
+  body('otp').toInt().isNumeric().withMessage('OTP must be a number')
 ];
 
 const validateForgotPassword = [
@@ -99,7 +96,6 @@ const validateForgotPassword = [
 const validateResetPassword = [
   body('newPassword')
     .isLength({ min: 8 }).withMessage('Password must be at least 8 characters long')
-    .matches(/[0-9]/).withMessage('Password must contain a number')
     .matches(/[a-z]/).withMessage('Password must contain a lowercase letter')
     .matches(/[A-Z]/).withMessage('Password must contain an uppercase letter')
     .matches(/[!@#$%^&*(),.?"':;{}|<>-_]/).withMessage('Password must contain a special character')
@@ -109,30 +105,19 @@ const validateUpdatePassword = [
   body('oldPassword').notEmpty().withMessage('Old password is required'),
   body('newPassword')
     .isLength({ min: 8 }).withMessage('Password must be at least 8 characters long')
-    .matches(/[0-9]/).withMessage('Password must contain a number')
     .matches(/[a-z]/).withMessage('Password must contain a lowercase letter')
     .matches(/[A-Z]/).withMessage('Password must contain an uppercase letter')
     .matches(/[!@#$%^&*(),.?"':;{}|<>-_]/).withMessage('Password must contain a special character')
+];
+
+const validateResendVerification = [
+  body('email').isEmail().withMessage('Valid email is required').normalizeEmail()
 ];
 
 const validateUpdateEmail = [
   body('eMail').isEmail().withMessage('Valid email is required').normalizeEmail()
 ];
 
-const validateEditProfile = [
-  body('firstName').notEmpty().withMessage('First name is required'),
-  body('lastName').notEmpty().withMessage('Last name is required'),
-  body('country').notEmpty().withMessage('Country is required'),
-  body('phoneNumber').matches(/^\+?[1-9]\d{1,14}$/).withMessage('Phone number must be in the correct international format'),
-];
-
-const validateCompleteAccount = [
-  body('firstName').notEmpty().withMessage('First name is required'),
-  body('lastName').notEmpty().withMessage('Last name is required'),
-  body('country').notEmpty().withMessage('Country is required'),
-  body('role').isIn(['Owner', 'Worker']).withMessage('Role must be either owner or worker'),
-  //body('phoneNumber').matches(/^\+?[1-9]\d{1,14}$/).withMessage('Phone number must be in the correct international format'),
-];
 
 const validateUnable2FA = [
   body('phoneNumber').matches(/^\+?[1-9]\d{1,14}$/).withMessage('Phone number must be in the correct international format')
@@ -157,9 +142,10 @@ export {
   validateResetPassword,
   validateUpdatePassword,
   validateUpdateEmail,
-  validateEditProfile,
-  validateCompleteAccount,
   validateUnable2FA,
   validateUploadPFP,
-  validateUpdateSubscriptionType
+  validateUpdateSubscriptionType,
+  validateEmailVerification,
+  validateResendVerification
+  
 };
