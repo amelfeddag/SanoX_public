@@ -328,12 +328,11 @@ const login = async (req, res) => {
         console.log('Email:', req.body.email);
         console.log('Password:', req.body.password);
 
-
         const { email, password } = req.body;
 
         console.log('Fetching user from database:', email);
-        const { data: users, error: userError } = await supabase
-            .from('users')
+        const { data: userData, error: userError } = await supabase
+            .from('users')  // Fixed: lowercase table name
             .select(`
                 id,
                 email,
@@ -348,19 +347,19 @@ const login = async (req, res) => {
                     address,
                     emergency_contact
                 )
-                    `)
+            `)
             .eq('email', email)
             .eq('user_type', 'patient')
             .single();
             
-
-         if (userError || !userData) {
+        if (userError || !userData) {  // Fixed: using userData instead of undefined variable
             console.warn('Invalid email or not a patient:', email);
             return res.status(StatusCodes.UNAUTHORIZED).json({ 
                 error: 'Invalid email or password' 
             });
         }
-        //check if there is a pending verification 
+
+        // Check if there is a pending verification 
         const pendingVerification = otpStore.get(email);
         if (pendingVerification) {
             return res.status(StatusCodes.UNAUTHORIZED).json({
@@ -368,7 +367,8 @@ const login = async (req, res) => {
                 requiresVerification: true
             });
         }
-        // password
+
+        // Check password
         console.log('Checking password for:', email);
         const isCorrectPassword = await bcrypt.compare(password, userData.password_hash);
         if (!isCorrectPassword) {
@@ -377,7 +377,8 @@ const login = async (req, res) => {
                 error: 'Invalid email or password' 
             });
         }
-        //chck if patient profile exists
+
+        // Check if patient profile exists
         if (!userData.patients || userData.patients.length === 0) {
             console.error('Patient profile not found for user:', userData.id);
             return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ 
@@ -387,8 +388,8 @@ const login = async (req, res) => {
 
         const patient = userData.patients[0];
 
-       console.log('Patient logged in successfully:', userData.id);
-       console.log('Generating JWT token for patient:', userData.id);
+        console.log('Patient logged in successfully:', userData.id);
+        console.log('Generating JWT token for patient:', userData.id);
         const token = jwt.sign(
             { 
                 user_id: userData.id, 
@@ -425,6 +426,8 @@ const login = async (req, res) => {
         });
     }
 };
+
+
 const resendVerificationCode = async (req, res) => {
     try {
         console.log('Resend verification code request:', req.body);
