@@ -78,8 +78,7 @@ const validateLogin = [
 const validateEmailVerification = [
   body('email').isEmail().withMessage('Valid email is required').normalizeEmail(),
   body('otp')
-    .toInt()
-    .isNumeric()
+    .notEmpty()
     .withMessage('OTP must be numeric')
     .isLength({ min: 6, max: 6 })
     .withMessage('OTP must be exactly 6 digits')
@@ -90,7 +89,7 @@ const validateVerifyOTP = [
 ];
 
 const validateForgotPassword = [
-  body('eMail').isEmail().withMessage('Valid email is required').normalizeEmail()
+  body('email').isEmail().withMessage('Valid email is required').normalizeEmail()
 ];
 
 const validateResetPassword = [
