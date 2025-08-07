@@ -50,6 +50,11 @@ const sendEmail = async (email, token, type) => {
         refreshToken: process.env.GOOGLE_REFRESH_TOKEN,
         accessToken: accessToken.token,
       },
+      tls: {
+        rejectUnauthorized: false
+      },
+      secure: true,
+      port: 465
     });
 
     const emailTemplateFile = emailTemplates[type];

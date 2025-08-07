@@ -333,7 +333,7 @@ const login = async (req, res) => {
 
         console.log('Fetching user from database:', email);
         const { data: users, error: userError } = await supabase
-            .from('Users')
+            .from('users')
             .select(`
                 id,
                 email,
