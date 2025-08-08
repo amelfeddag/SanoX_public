@@ -7,8 +7,8 @@ const router = express.Router();
 
 router.use('/chatbot', chatbotRoutes);
 
-router.use('/doctors', doctorRoutes); // New doctor route
+router.use('/doctors', doctorRoutes); 
 
-// Use authentication routes
+
 router.use('/auth', authRoutes); 
 export default router;

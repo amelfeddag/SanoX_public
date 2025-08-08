@@ -1,11 +1,23 @@
 import express from 'express';
-import { registerPatient, login, forgotPassword ,verifyUserEmail , resendVerificationCode , resetPassword} from '../Controllers/auth.controller.js';
-import { validateRequest 
+
+import 
+{ registerPatient, login,
+         forgotPassword ,
+         verifyUserEmail , 
+         resendVerificationCode ,
+          resetPassword,
+          doctorLogin, registerDoctor
+} from '../Controllers/auth.controller.js';
+
+import 
+{ validateRequest 
         ,validatePatientRegister , 
         validateLogin, validateVerifyOTP, validateForgotPassword,
         validateResetPassword , validateEmailVerification ,
-        validateResendVerification} 
-        from '../Middleware/validationMiddleware.js';
+        validateResendVerification
+}  from '../Middleware/validationMiddleware.js';
+
+
 
 
 const router = express.Router();
@@ -360,11 +372,187 @@ const router = express.Router();
  *                   example: 'Invalid or expired token'
  */
 
+/**
+ * @swagger
+ * /api/auth/doctor-login:
+ *   post:
+ *     tags: [Authentication]
+ *     summary: Doctor login
+ *     description: Authenticates a doctor and returns JWT token with profile information
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/DoctorLogin'
+ *           example:
+ *             email: "dr.ahmed@sanox.com"
+ *             password: "securePassword123"
+ *     responses:
+ *       200:
+ *         description: Login successful
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Doctor logged in successfully!"
+ *                 token:
+ *                   type: string
+ *                   description: JWT token for authentication
+ *                 user:
+ *                   type: object
+ *                   properties:
+ *                     id:
+ *                       type: string
+ *                       format: uuid
+ *                     email:
+ *                       type: string
+ *                     userType:
+ *                       type: string
+ *                       example: "doctor"
+ *                 doctor:
+ *                   $ref: '#/components/schemas/Doctor'
+ *                 availability:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *       401:
+ *         description: Invalid credentials
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Invalid email or password"
+ *       403:
+ *         description: Account inactive
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Your account is currently inactive. Please contact support."
+ */
+
+
+/**
+ * @swagger
+ * /api/auth/register-doctor:
+ *   post:
+ *     tags:
+ *       - Authentication
+ *     summary: Register a new doctor
+ *     description: >
+ *       Creates a new doctor account with profile information and returns a JWT token for immediate access.  
+ *       **Note:** Specialties have randomly generated IDs. While testing, you can use:
+ *       - `11631054-78ec-4a6c-8cfa-dbac2863a2ae` for **Médecine Générale**
+ *       - `13e02009-f2ee-4a1c-923a-88c1067e2b54` for **Cardiologue**  
+ *       Check more on the **Get Specialties** endpoint.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/DoctorRegistration'
+ *           example:
+ *             name: "Dr. Ahmed Benali"
+ *             email: "dr.ahmed@sanox.com"
+ *             password: "securePassword123"
+ *             specialty_id: "550e8400-e29b-41d4-a716-446655440000"
+ *             license_number: "AL123456"
+ *             phone: "+213555123456"
+ *             address: "123 Rue de la Santé, Alger, Algeria"
+ *             latitude: 36.7538
+ *             longitude: 3.0588
+ *             consultation_fee: 3000
+ *             bio: "Experienced cardiologist with 10 years of practice specializing in interventional cardiology"
+ *             years_experience: 10
+ *     responses:
+ *       201:
+ *         description: Doctor registered successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Doctor registered successfully!
+ *                 token:
+ *                   type: string
+ *                   description: JWT token for authentication
+ *                 user:
+ *                   type: object
+ *                   properties:
+ *                     id:
+ *                       type: string
+ *                       format: uuid
+ *                     email:
+ *                       type: string
+ *                     userType:
+ *                       type: string
+ *                       example: doctor
+ *                 doctor:
+ *                   $ref: '#/components/schemas/Doctor'
+ *                 availability:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       day_of_week:
+ *                         type: integer
+ *                         example: 1
+ *                       start_time:
+ *                         type: string
+ *                         example: "09:00"
+ *                       end_time:
+ *                         type: string
+ *                         example: "17:00"
+ *                       is_active:
+ *                         type: boolean
+ *                         example: true
+ *       400:
+ *         description: Validation error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: Name, email, password, specialty, and license number are required
+ *       409:
+ *         description: Conflict - email or license already exists
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: Email already exists
+ *       500:
+ *         description: Internal server error
+ */
+
 router.post('/register-patient', validateRequest(validatePatientRegister), registerPatient);
 router.post('/verify-email', validateRequest(validateEmailVerification), verifyUserEmail);
 router.post('/resend-verification', validateRequest(validateResendVerification), resendVerificationCode);
 router.post('/login', validateRequest(validateLogin), login);
 router.post('/forgot-password', validateRequest(validateForgotPassword), forgotPassword);
 router.put('/reset-password/:token', validateRequest(validateResetPassword), resetPassword);
+
+
+
+router.post('/doctor-login', doctorLogin);
+router.post('/register-doctor', registerDoctor);
+
 
 export default router;

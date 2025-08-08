@@ -7,12 +7,7 @@ const router = express.Router();
 const chatController = new ChatController();
 const medicalChat = new MedicalChatService();
 
-/**
- * @swagger
- * tags:
- *   name: Medical Chat
- *   description: AI-powered medical consultation chat
- */
+
 
 /**
  * @swagger
