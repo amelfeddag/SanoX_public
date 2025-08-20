@@ -155,9 +155,11 @@ const registerPatient = async (req, res) => {
        const storedData = otpStore.get(email);
        if (!storedData) {
             return res.status(StatusCodes.BAD_REQUEST).json({
-                error: 'No verification request found for this email'
+                error: 'No verification request found for this email',
+              
             });
         }
+        console.log("rani hna")
         if (Date.now() > storedData.expiresAt) {
             otpStore.delete(email);
             return res.status(StatusCodes.BAD_REQUEST).json({
