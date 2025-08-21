@@ -462,7 +462,8 @@ const router = express.Router();
  *           schema:
  *             $ref: '#/components/schemas/DoctorRegistration'
  *           example:
- *             name: "Dr. Ahmed Benali"
+ *             first_name: "Dr. Ahmed ",
+ *              last_name: "Benali",
  *             email: "dr.ahmed@sanox.com"
  *             password: "securePassword123"
  *             specialty_id: "550e8400-e29b-41d4-a716-446655440000"

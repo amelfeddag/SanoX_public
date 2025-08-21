@@ -8,7 +8,7 @@ const router = express.Router();
 
 /**
  * @swagger
- * /api/doctors/specialties:
+ * /api/doctor/specialties:
  *   get:
  *     tags: [Doctors]
  *     summary: Get all medical specialties
@@ -56,7 +56,7 @@ const router = express.Router();
 
 /**
  * @swagger
- * /api/doctors/nearby:
+ * /api/doctor/nearby:
  *   get:
  *     tags: [Doctors]
  *     summary: Get nearby doctors
@@ -184,7 +184,7 @@ const router = express.Router();
 
 /**
  * @swagger
- * /api/doctors:
+ * /api/doctor:
  *   get:
  *     tags: [Doctors]
  *     summary: Get all doctors
