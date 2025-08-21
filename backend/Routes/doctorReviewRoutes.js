@@ -9,7 +9,7 @@ import { body, validationResult } from 'express-validator';
 
 const router = express.Router();
 
-// Validation middleware for doctor response
+
 const validateDoctorResponse = [
     body('response')
         .notEmpty()
@@ -19,7 +19,7 @@ const validateDoctorResponse = [
         .withMessage('Response must not exceed 1000 characters')
 ];
 
-// Middleware to handle validation errors
+
 const handleValidationErrors = (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {

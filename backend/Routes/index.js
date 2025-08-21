@@ -6,6 +6,7 @@ import patientAppointmentRoutes from './patientAppointmentRoutes.js'; // Import 
 import notificationRoutes from './notificationRoutes.js'; // Import notification routes
 import doctorAppointmenttmentRoutes from './doctorAppointmentRoutes.js'; 
 import reviewRoutes from './reviewRoutes.js'; // Import review routes
+import doctorReviewRoutes from './doctorReviewRoutes.js'; // Import doctor review routes
 const router = express.Router();
 
 
@@ -13,23 +14,18 @@ const router = express.Router();
 router.use('/auth', authRoutes); 
 //bot routes
 router.use('/chatbot', chatbotRoutes);
-
 // Doctor routes 
 router.use('/doctor', doctorRoutes);
 // Patient appointment routes
 router.use('/appointments', patientAppointmentRoutes);
-//notification routes
-router.use('/notifications ', notificationRoutes);
-// Doctor routes 
-router.use('/doctor', doctorRoutes);
 // Doctor appointment routes
 router.use('/doctor/appointments', doctorAppointmenttmentRoutes);
-// // Doctor review routes (for doctors to view their reviews)
-// router.use('/doctor/reviews', doctorReviewRoutes);
 // Review routes (for patients to create/manage reviews)
 router.use('/reviews', reviewRoutes);
-
-
+// // Doctor review routes (for doctors to view their reviews)
+router.use('/doctor/reviews', doctorReviewRoutes);
+//notification routes
+router.use('/notifications ', notificationRoutes);
 
 
 export default router;
