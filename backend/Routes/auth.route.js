@@ -18,8 +18,6 @@ import
 }  from '../Middleware/validationMiddleware.js';
 
 
-
-
 const router = express.Router();
 
 
@@ -462,8 +460,8 @@ const router = express.Router();
  *           schema:
  *             $ref: '#/components/schemas/DoctorRegistration'
  *           example:
- *             first_name: "Dr. Ahmed ",
- *              last_name: "Benali",
+ *             first_name: "Dr. Ahmed"
+ *             last_name: "Benali"
  *             email: "dr.ahmed@sanox.com"
  *             password: "securePassword123"
  *             specialty_id: "550e8400-e29b-41d4-a716-446655440000"
@@ -485,7 +483,7 @@ const router = express.Router();
  *               properties:
  *                 message:
  *                   type: string
- *                   example: Doctor registered successfully!
+ *                   example: "Doctor registered successfully!"
  *                 token:
  *                   type: string
  *                   description: JWT token for authentication
@@ -521,27 +519,12 @@ const router = express.Router();
  *                         example: true
  *       400:
  *         description: Validation error
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 error:
- *                   type: string
- *                   example: Name, email, password, specialty, and license number are required
  *       409:
  *         description: Conflict - email or license already exists
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 error:
- *                   type: string
- *                   example: Email already exists
  *       500:
  *         description: Internal server error
  */
+
 
 router.post('/register-patient', validateRequest(validatePatientRegister), registerPatient);
 router.post('/verify-email', validateRequest(validateEmailVerification), verifyUserEmail);
